@@ -2,8 +2,6 @@
 import {ContentState, EditorState, convertToRaw, convertFromRaw} from 'draft-js';
 import {stateToHTML} from 'draft-js-export-html';
 import {stateFromHTML} from 'draft-js-import-html';
-import {stateToMarkdown} from 'draft-js-export-markdown';
-import {stateFromMarkdown} from 'draft-js-import-markdown';
 
 import type {DraftDecoratorType as Decorator} from 'draft-js/lib/DraftDecoratorType';
 import type {Options as ImportOptions} from 'draft-js-import-html';
@@ -26,9 +24,7 @@ export default class EditorValue {
   }
 
   setEditorState(editorState: EditorState): EditorValue {
-    return (this._editorState === editorState) ?
-      this :
-      new EditorValue(editorState);
+    return this._editorState === editorState ? this : new EditorValue(editorState);
   }
 
   toString(format: string, options?: ExportOptions): string {
@@ -39,7 +35,11 @@ export default class EditorValue {
     return (this._cache[format] = toString(this.getEditorState(), format, options));
   }
 
-  setContentFromString(markup: string, format: string, options?: ImportOptions): EditorValue {
+  setContentFromString(
+    markup: string,
+    format: string,
+    options?: ImportOptions
+  ): EditorValue {
     let editorState = EditorState.push(
       this._editorState,
       fromString(markup, format, options),
@@ -57,44 +57,39 @@ export default class EditorValue {
     return new EditorValue(editorState);
   }
 
-  static createFromString(markup: string, format: string, decorator: ?Decorator, options?: ImportOptions): EditorValue {
+  static createFromString(
+    markup: string,
+    format: string,
+    decorator: ?Decorator,
+    options?: ImportOptions
+  ): EditorValue {
     let contentState = fromString(markup, format, options);
     let editorState = EditorState.createWithContent(contentState, decorator);
     return new EditorValue(editorState, {[format]: markup});
   }
 }
 
-function toString(editorState: EditorState, format: string, options?: ExportOptions): string {
-  let contentState = editorState.getCurrentContent();
-  switch (format) {
-    case 'html': {
-      return stateToHTML(contentState, options);
-    }
-    case 'markdown': {
-      return stateToMarkdown(contentState);
-    }
-    case 'raw': {
-      return JSON.stringify(convertToRaw(contentState));
-    }
-    default: {
-      throw new Error('Format not supported: ' + format);
-    }
+function toString(
+  editorState: EditorState,
+  format: string,
+  options?: ExportOptions
+): string {
+  const contentState = editorState.getCurrentContent();
+  if (format === 'html') {
+    return stateToHTML(contentState, options);
+  } else {
+    return JSON.stringify(convertToRaw(contentState));
   }
 }
 
-function fromString(markup: string, format: string, options?: ImportOptions): ContentState {
-  switch (format) {
-    case 'html': {
-      return stateFromHTML(markup, options);
-    }
-    case 'markdown': {
-      return stateFromMarkdown(markup, options);
-    }
-    case 'raw': {
-      return convertFromRaw(JSON.parse(markup));
-    }
-    default: {
-      throw new Error('Format not supported: ' + format);
-    }
+function fromString(
+  markup: string,
+  format: string,
+  options?: ImportOptions
+): ContentState {
+  if (format === 'html') {
+    return stateFromHTML(markup, options);
+  } else {
+    return convertFromRaw(JSON.parse(markup));
   }
 }

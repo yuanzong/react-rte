@@ -12,9 +12,9 @@ import type {EditorValue} from './RichTextEditor';
 
 type Props = {};
 type State = {
-  value: EditorValue;
-  format: string;
-  readOnly: boolean;
+  value: EditorValue,
+  format: string,
+  readOnly: boolean,
 };
 
 export default class EditorDemo extends Component {
@@ -37,7 +37,13 @@ export default class EditorDemo extends Component {
     return (
       <div className="editor-demo">
         <div className="row">
-          <p>This is a demo of the <a href="https://github.com/sstur/react-rte" target="top">react-rte</a> editor.</p>
+          <p>
+            This is a demo of the{' '}
+            <a href="https://github.com/sstur/react-rte" target="top">
+              react-rte
+            </a>{' '}
+            editor.
+          </p>
         </div>
         <div className="row">
           <RichTextEditor
@@ -90,16 +96,6 @@ export default class EditorDemo extends Component {
           </label>
           <label className="radio-item">
             <input
-              type="radio"
-              name="format"
-              value="markdown"
-              checked={format === 'markdown'}
-              onChange={this._onChangeFormat}
-            />
-            <span>Markdown</span>
-          </label>
-          <label className="radio-item">
-            <input
               type="checkbox"
               onChange={this._onChangeReadOnly}
               checked={this.state.readOnly}
@@ -117,8 +113,12 @@ export default class EditorDemo extends Component {
         </div>
         <div className="row btn-row">
           <span className="label">Debugging:</span>
-          <button className="btn" onClick={this._logState}>Log Content State</button>
-          <button className="btn" onClick={this._logStateRaw}>Log Raw</button>
+          <button className="btn" onClick={this._logState}>
+            Log Content State
+          </button>
+          <button className="btn" onClick={this._logStateRaw}>
+            Log Raw
+          </button>
         </div>
       </div>
     );
@@ -126,14 +126,16 @@ export default class EditorDemo extends Component {
 
   _logState() {
     let editorState = this.state.value.getEditorState();
-    let contentState = window.contentState = editorState.getCurrentContent().toJS();
+    let contentState = (window.contentState = editorState
+      .getCurrentContent()
+      .toJS());
     console.log(contentState);
   }
 
   _logStateRaw() {
     let editorState = this.state.value.getEditorState();
     let contentState = editorState.getCurrentContent();
-    let rawContentState = window.rawContentState = convertToRaw(contentState);
+    let rawContentState = (window.rawContentState = convertToRaw(contentState));
     console.log(JSON.stringify(rawContentState));
   }
 

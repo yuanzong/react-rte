@@ -1,6 +1,6 @@
 /*eslint-env node */
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
 
 var rules = [
   {
@@ -10,7 +10,6 @@ var rules = [
   },
   {
     test: /\.css$/,
-    exclude: /\.global\.css$/,
     use: [
       {
         loader: 'style-loader',
@@ -26,43 +25,40 @@ var rules = [
       },
     ],
   },
-  {
-    test: /\.global\.css$/,
-    use: ['style-loader', 'raw-loader'],
-  },
 ];
 
-module.exports = [{
-  entry: './src/RichTextEditor.js',
-  output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'react-rte.js',
-    libraryTarget: 'commonjs2',
+module.exports = [
+  {
+    entry: './src/RichTextEditor.js',
+    output: {
+      path: path.join(__dirname, 'dist'),
+      filename: 'react-rte.js',
+      libraryTarget: 'commonjs2',
+    },
+    externals: {
+      react: 'react',
+      'react-dom': 'react-dom',
+    },
+    module: {
+      rules: rules,
+    },
+    plugins: [
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: JSON.stringify('production'),
+        },
+      }),
+    ],
   },
-  externals: {
-    react: 'react',
-    'react-dom': 'react-dom',
+  {
+    entry: './src/demo.js',
+    output: {
+      path: path.join(__dirname, 'dist'),
+      publicPath: '/dist/',
+      filename: 'demo.js',
+    },
+    module: {
+      rules: rules,
+    },
   },
-  module: {
-    rules: rules,
-  },
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: JSON.stringify('production'),
-      },
-    }),
-    new webpack.optimize.UglifyJsPlugin(),
-    new webpack.optimize.ModuleConcatenationPlugin(),
-  ],
-}, {
-  entry: './src/demo.js',
-  output: {
-    path: path.join(__dirname, 'dist'),
-    publicPath: '/dist/',
-    filename: 'demo.js',
-  },
-  module: {
-    rules: rules,
-  },
-}];
+];
