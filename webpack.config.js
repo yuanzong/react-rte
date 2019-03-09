@@ -1,31 +1,7 @@
 /*eslint-env node */
 const path = require('path');
 const webpack = require('webpack');
-
-var rules = [
-  {
-    test: /\.js$/,
-    use: ['babel-loader'],
-    exclude: /node_modules/,
-  },
-  {
-    test: /\.css$/,
-    use: [
-      {
-        loader: 'style-loader',
-        options: {sourceMap: true},
-      },
-      {
-        loader: 'css-loader',
-        options: {
-          modules: true,
-          importLoaders: true,
-          localIdentName: '[name]__[local]___[hash:base64:5]',
-        },
-      },
-    ],
-  },
-];
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = [
   {
@@ -40,13 +16,36 @@ module.exports = [
       'react-dom': 'react-dom',
     },
     module: {
-      rules: rules,
+      rules: [
+        {
+          test: /\.js$/,
+          use: ['babel-loader'],
+          exclude: /node_modules/,
+        },
+        {
+          test: /\.css$/,
+          exclude: /node_modules/,
+          use: [
+            MiniCssExtractPlugin.loader,
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                importLoaders: 1,
+              },
+            },
+          ],
+        },
+      ],
     },
     plugins: [
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('production'),
         },
+      }),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
       }),
     ],
   },
@@ -58,7 +57,27 @@ module.exports = [
       filename: 'demo.js',
     },
     module: {
-      rules: rules,
+      rules: [
+        {
+          test: /\.js$/,
+          use: ['babel-loader'],
+          exclude: /node_modules/,
+        },
+        {
+          test: /\.css$/,
+          exclude: /node_modules/,
+          use: [
+            'style-loader',
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                importLoaders: 1,
+              },
+            },
+          ],
+        },
+      ],
     },
   },
 ];

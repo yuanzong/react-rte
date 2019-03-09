@@ -18,7 +18,6 @@ import autobind from 'class-autobind';
 import EventEmitter from 'events';
 import {BLOCK_TYPE} from 'draft-js-utils';
 
-import './Draft.global.css';
 import styles from './RichTextEditor.css';
 
 import type {ContentBlock} from 'draft-js';
